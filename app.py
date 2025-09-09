@@ -14,11 +14,18 @@ genai.configure(api_key=GEMINI_API_KEY)
 model = genai.GenerativeModel("gemini-2.5-pro")
 
 # Connect to Google Sheets
+from google.oauth2 import service_account
+import gspread
+
 scope = ["https://www.googleapis.com/auth/spreadsheets",
          "https://www.googleapis.com/auth/drive"]
-creds = ServiceAccountCredentials.from_json_keyfile_name("service_account2.json", scope)
+
+creds = service_account.Credentials.from_service_account_info(
+    st.secrets["gcp_service_account"], scopes=scope
+)
+
 client = gspread.authorize(creds)
-sheet = client.open_by_key(SHEET_ID).sheet1   # since only one tab, use sheet1
+
 
 # ===== Few-Shot Examples =====
 FEW_SHOT = """
